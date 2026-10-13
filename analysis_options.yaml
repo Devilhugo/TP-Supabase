@@ -1,0 +1,9 @@
+analyzer:
+  exclude:
+    - build/**
+include: package:flutter_lints/flutter.yaml
+
+linter:
+  rules:
+    # databaseHelper.dart garde le nom imposé par le TP
+    file_names: false
