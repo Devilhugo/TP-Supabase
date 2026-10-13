@@ -12,6 +12,7 @@ import 'pages/home_page.dart';
 import 'pages/login_page.dart';
 import 'pages/picture_page.dart';
 import 'pages/qrcode_page.dart';
+import 'pages/register_page.dart';
 import 'pages/splash_page.dart';
 
 Future<void> main() async {
@@ -46,6 +47,7 @@ class MyApp extends StatelessWidget {
       initialRoute: LoginPage.route,
       routes: {
         LoginPage.route: (context) => const LoginPage(),
+        RegisterPage.route: (context) => const RegisterPage(),
         SplashPage.route: (context) => const SplashPage(),
         HomePage.route: (context) => const HomePage(),
         CartePage.route: (context) => const CartePage(),

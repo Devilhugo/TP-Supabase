@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../services/authentification_service.dart';
+import 'register_page.dart';
 import 'splash_page.dart';
 
 class LoginPage extends StatefulWidget {
@@ -144,6 +145,13 @@ class _LoginPageState extends State<LoginPage> {
                           child: CircularProgressIndicator(strokeWidth: 2),
                         )
                       : const Text('Connexion'),
+                ),
+                const SizedBox(height: 10),
+                TextButton(
+                  onPressed: () =>
+                      Navigator.pushNamed(context, RegisterPage.route),
+                  child: Text('Pas encore de compte ? S\'inscrire',
+                      style: TextStyle(color: Colors.grey[600])),
                 ),
               ],
             ),

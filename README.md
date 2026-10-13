@@ -32,8 +32,16 @@ Dart récent), ce n'est pas grave : les fichiers `.g.dart` fournis suffisent.
 ## 2. Supabase
 
 1. Crée un projet sur supabase.com.
-2. Authentication > Users > Add user : crée un utilisateur de test
-   (coche "Auto Confirm User").
+2. Comptes utilisateurs : on peut s'inscrire directement depuis l'appli
+   (bouton « Pas encore de compte ? S'inscrire » sur l'écran de connexion).
+   Dans Authentication > Sign In / Providers, vérifie que
+   « Allow new users to sign up » est activé.
+   - Si « Confirm email » est activé, l'utilisateur reçoit un email de
+     confirmation et doit cliquer sur le lien avant de se connecter.
+   - Si tu le désactives, l'utilisateur est connecté dès l'inscription.
+
+   Tu peux aussi créer un utilisateur à la main : Authentication > Users >
+   Add user (coche "Auto Confirm User").
 3. SQL Editor : exécute `supabase_setup.sql` (tables, clé étrangère,
    données, policies RLS).
 4. Project Settings > API Keys : copie l'URL du projet et la
@@ -78,6 +86,7 @@ lib/
 ├── widgets/app_drawer.dart   menu
 └── pages/
     ├── login_page.dart       étapes 17-20, 23
+    ├── register_page.dart    inscription (email + mot de passe)
     ├── splash_page.dart      étape 36 (chargement du cache)
     ├── home_page.dart        étapes 2-3 (url_launcher)
     ├── carte_page.dart       étapes 3-5 (OpenStreetMap + marker)
@@ -104,7 +113,8 @@ Les tests vérifient la conversion des données Supabase (JSON) en objets
 
 ## Parcours de l'appli
 
-Login -> splash (synchro Supabase -> Hive, 2 s minimum) -> Accueil
+Inscription (si pas encore de compte) -> Login
+-> splash (synchro Supabase -> Hive, 2 s minimum) -> Accueil
 (email dans l'AppBar). Toutes les pages reviennent sur `/home` via la
 flèche ; Déconnexion vide la session, les préférences et le cache, puis
 renvoie sur `/login`.

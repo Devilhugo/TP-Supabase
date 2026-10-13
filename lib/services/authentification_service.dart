@@ -20,16 +20,7 @@ class AuthentificationService {
       );
 
       if (response.user != null && response.session != null) {
-        // enregistrement du token et de l'email dans shared_preferences
-        final preferences = await SharedPreferences.getInstance();
-        await preferences.setString('token', response.session!.accessToken);
-        await preferences.setString('email', login);
-
-        logger.i(preferences.getString('email'));
-        // On ne logge qu'un extrait du token : un JWT complet dans les logs
-        // permettrait à quiconque y a accès d'usurper la session.
-        final token = preferences.getString('token') ?? '';
-        logger.i('token : ${token.substring(0, token.length < 20 ? token.length : 20)}...');
+        await _enregistrerSession(login, response.session!);
         return true;
       }
       return false;
@@ -41,6 +32,41 @@ class AuthentificationService {
       logger.e('erreur login ou pwd authentification : $e');
       return false;
     }
+  }
+
+  /// Inscription d'un nouvel utilisateur avec Supabase.
+  /// Renvoie true si l'utilisateur est directement connecté, false s'il doit
+  /// d'abord confirmer son email (option "Confirm email" active dans Supabase).
+  /// Les AuthException sont relancées (ex : "User already registered").
+  Future<bool> signUp({required String email, required String pwd}) async {
+    try {
+      final response = await _client.auth.signUp(
+        email: email,
+        password: pwd,
+      );
+
+      if (response.user != null && response.session != null) {
+        await _enregistrerSession(email, response.session!);
+        return true;
+      }
+      return false;
+    } on AuthException catch (e) {
+      logger.e('erreur exception inscription : ${e.message}');
+      rethrow;
+    }
+  }
+
+  /// Enregistrement du token et de l'email dans shared_preferences.
+  Future<void> _enregistrerSession(String email, Session session) async {
+    final preferences = await SharedPreferences.getInstance();
+    await preferences.setString('token', session.accessToken);
+    await preferences.setString('email', email);
+
+    logger.i(preferences.getString('email'));
+    // On ne logge qu'un extrait du token : un JWT complet dans les logs
+    // permettrait à quiconque y a accès d'usurper la session.
+    final token = preferences.getString('token') ?? '';
+    logger.i('token : ${token.substring(0, token.length < 20 ? token.length : 20)}...');
   }
 
   /// Déconnexion : session Supabase, shared_preferences et cache local.
