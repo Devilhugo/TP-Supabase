@@ -1,27 +1,33 @@
 # TP Supabase – Flutter
 
+Application Flutter du TP Supabase : authentification, liste de clients
+synchronisée depuis Supabase avec cache local Hive, carte OpenStreetMap,
+photo / scan de documents en PDF, scanner de QR codes et DataGrid Syncfusion.
+
 ## 1. Installation
 
-Pars du projet du prof (repo `tpsupabase`) et remplace le dossier `lib/`
-par celui-ci. Puis, à la racine du projet :
+Prérequis : Flutter (Dart SDK >= 3.8).
 
 ```bash
-flutter pub add supabase_flutter url_launcher internet_connection_checker \
-  flutter_map latlong2 logger image_picker cunning_document_scanner pdf \
-  flutter_pdfview path_provider share_plus shared_preferences hive \
-  hive_flutter mobile_scanner syncfusion_flutter_datagrid
-flutter pub add dev:build_runner dev:hive_generator
+git clone https://github.com/Devilhugo/TP-Supabase.git
+cd TP-Supabase
+flutter pub get
 ```
 
+Toutes les dépendances sont déjà déclarées dans `pubspec.yaml`, et les
+dossiers des plateformes (android, ios, web, windows, linux, macos) sont
+inclus dans le dépôt.
+
 Les adapters Hive (`client.g.dart`, `adresse.g.dart`) sont déjà fournis.
-Tu peux les régénérer avec :
+Pour les régénérer, ajoute d'abord `build_runner` et `hive_generator` :
 
 ```bash
+flutter pub add dev:build_runner dev:hive_generator
 dart run build_runner build --delete-conflicting-outputs
 ```
 
 Si `hive_generator` refuse de s'installer (conflit de versions avec un SDK
-Dart récent), retire-le : les fichiers `.g.dart` fournis suffisent.
+Dart récent), ce n'est pas grave : les fichiers `.g.dart` fournis suffisent.
 
 ## 2. Supabase
 
@@ -31,7 +37,8 @@ Dart récent), retire-le : les fichiers `.g.dart` fournis suffisent.
 3. SQL Editor : exécute `supabase_setup.sql` (tables, clé étrangère,
    données, policies RLS).
 4. Project Settings > API : copie l'URL et la clé `anon` dans
-   `lib/config.dart`.
+   `lib/config.dart` (à la place de `VOTRE-PROJET` et `VOTRE_ANON_KEY`).
+   Sans ça, l'appli ne peut pas se connecter.
 
 ## 3. Android
 
@@ -90,7 +97,21 @@ lib/
     ├── client_page.dart      étapes 29-35 (liste + jointure)
     ├── datagrid_page.dart    étape 38 (Syncfusion)
     └── qrcode_page.dart      étape 37 (mobile_scanner)
+
+test/widget_test.dart         tests des modèles Client / Adresse
+supabase_setup.sql            script de création de la base
 ```
+
+## 6. Lancer et tester
+
+```bash
+flutter run          # lance l'appli sur l'appareil / émulateur
+flutter analyze      # vérifie le code
+flutter test         # lance les tests
+```
+
+Les tests vérifient la conversion des données Supabase (JSON) en objets
+`Client` / `Adresse` ; ils ne nécessitent pas de connexion à Supabase.
 
 ## Parcours de l'appli
 
