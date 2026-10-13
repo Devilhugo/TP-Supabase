@@ -15,8 +15,8 @@ flutter pub get
 ```
 
 Toutes les dépendances sont déjà déclarées dans `pubspec.yaml`, et les
-dossiers des plateformes (android, ios, web, windows, linux, macos) sont
-inclus dans le dépôt.
+dossiers des plateformes sont inclus dans le dépôt. L'appli est prévue
+pour Android.
 
 Les adapters Hive (`client.g.dart`, `adresse.g.dart`) sont déjà fournis.
 Pour les régénérer, ajoute d'abord `build_runner` et `hive_generator` :
@@ -42,39 +42,19 @@ Dart récent), ce n'est pas grave : les fichiers `.g.dart` fournis suffisent.
 
 ## 3. Android
 
-Dans `android/app/src/main/AndroidManifest.xml`, avant `<application>` :
+Les permissions et les `<queries>` nécessaires sont déjà déclarées dans
+`android/app/src/main/AndroidManifest.xml` :
 
-```xml
-<uses-permission android:name="android.permission.INTERNET"/>
-<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-<uses-permission android:name="android.permission.CAMERA"/>
-```
+- permissions `INTERNET`, `ACCESS_NETWORK_STATE` et `CAMERA` ;
+- `<queries>` pour ouvrir les liens `https`, `tel`, `sms` et `mailto`
+  (utilisés par url_launcher).
 
-Et dans le bloc `<queries>` (il existe déjà dans le template Flutter) :
-
-```xml
-<intent><action android:name="android.intent.action.VIEW"/><data android:scheme="https"/></intent>
-<intent><action android:name="android.intent.action.VIEW"/><data android:scheme="tel"/></intent>
-<intent><action android:name="android.intent.action.VIEW"/><data android:scheme="sms"/></intent>
-<intent><action android:name="android.intent.action.SENDTO"/><data android:scheme="mailto"/></intent>
-```
-
-Dans `android/app/build.gradle(.kts)`, vérifie `minSdk` >= 21
-(mets 23 si mobile_scanner ou cunning_document_scanner le réclament).
+`minSdk` reprend la valeur par défaut de Flutter (`flutter.minSdkVersion`
+dans `android/app/build.gradle.kts`). Si mobile_scanner ou
+cunning_document_scanner réclament une version plus élevée, mets `minSdk = 23`.
 Pour les erreurs Gradle/JDK, voir l'annexe du TP.
 
-## 4. iOS (si besoin)
-
-Dans `ios/Runner/Info.plist` :
-
-```xml
-<key>NSCameraUsageDescription</key>
-<string>Prendre des photos et scanner des documents/QR codes</string>
-<key>NSPhotoLibraryUsageDescription</key>
-<string>Choisir une image dans la galerie</string>
-```
-
-## 5. Arborescence
+## 4. Arborescence
 
 ```
 lib/
@@ -102,7 +82,7 @@ test/widget_test.dart         tests des modèles Client / Adresse
 supabase_setup.sql            script de création de la base
 ```
 
-## 6. Lancer et tester
+## 5. Lancer et tester
 
 ```bash
 flutter run          # lance l'appli sur l'appareil / émulateur
