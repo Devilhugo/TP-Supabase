@@ -37,12 +37,18 @@ class AuthentificationService {
   /// Inscription d'un nouvel utilisateur avec Supabase.
   /// Renvoie true si l'utilisateur est directement connecté, false s'il doit
   /// d'abord confirmer son email (option "Confirm email" active dans Supabase).
+  /// Le pseudo est stocké dans les métadonnées de l'utilisateur Supabase.
   /// Les AuthException sont relancées (ex : "User already registered").
-  Future<bool> signUp({required String email, required String pwd}) async {
+  Future<bool> signUp({
+    required String email,
+    required String pwd,
+    required String pseudo,
+  }) async {
     try {
       final response = await _client.auth.signUp(
         email: email,
         password: pwd,
+        data: {'pseudo': pseudo},
       );
 
       if (response.user != null && response.session != null) {
@@ -85,6 +91,25 @@ class AuthentificationService {
   Future<String?> getEmail() async {
     final preferences = await SharedPreferences.getInstance();
     return preferences.getString('email');
+  }
+
+  /// Pseudo de l'utilisateur connecté (métadonnées Supabase), null si absent.
+  String? getPseudo() {
+    final pseudo = _client.auth.currentUser?.userMetadata?['pseudo'];
+    if (pseudo is String && pseudo.trim().isNotEmpty) return pseudo;
+    return null;
+  }
+
+  /// Nom à afficher : le pseudo, ou l'email si aucun pseudo n'est renseigné
+  /// (comptes créés avant l'ajout du pseudo).
+  Future<String?> getNomAffiche() async {
+    return getPseudo() ?? _client.auth.currentUser?.email ?? await getEmail();
+  }
+
+  /// Modification du pseudo dans les métadonnées Supabase.
+  /// Déclenche l'évènement AuthChangeEvent.userUpdated.
+  Future<void> updatePseudo(String pseudo) async {
+    await _client.auth.updateUser(UserAttributes(data: {'pseudo': pseudo}));
   }
 
   Future<String?> getToken() async {

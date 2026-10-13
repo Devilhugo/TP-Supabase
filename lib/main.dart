@@ -11,6 +11,7 @@ import 'pages/datagrid_page.dart';
 import 'pages/home_page.dart';
 import 'pages/login_page.dart';
 import 'pages/picture_page.dart';
+import 'pages/profil_page.dart';
 import 'pages/qrcode_page.dart';
 import 'pages/register_page.dart';
 import 'pages/splash_page.dart';
@@ -50,6 +51,7 @@ class MyApp extends StatelessWidget {
         RegisterPage.route: (context) => const RegisterPage(),
         SplashPage.route: (context) => const SplashPage(),
         HomePage.route: (context) => const HomePage(),
+        ProfilPage.route: (context) => const ProfilPage(),
         CartePage.route: (context) => const CartePage(),
         PicturePage.route: (context) => const PicturePage(),
         ClientPage.route: (context) => const ClientPage(),

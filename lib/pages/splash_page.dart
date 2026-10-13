@@ -11,8 +11,7 @@ import 'home_page.dart';
 class SplashPage extends StatefulWidget {
   static const route = '/splash';
 
-  const SplashPage({super.key, this.email});
-  final String? email;
+  const SplashPage({super.key});
 
   @override
   State<SplashPage> createState() => _SplashPageState();
@@ -55,10 +54,7 @@ class _SplashPageState extends State<SplashPage>
     final reste = const Duration(seconds: 2) - DateTime.now().difference(debut);
     _timer = Timer(reste.isNegative ? Duration.zero : reste, () {
       if (!mounted) return;
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => HomePage(email: widget.email)),
-      );
+      Navigator.pushReplacementNamed(context, HomePage.route);
     });
   }
 

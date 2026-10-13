@@ -15,7 +15,8 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterPageState extends State<RegisterPage> {
-  // Contrôleurs des champs email, mot de passe et confirmation.
+  // Contrôleurs des champs pseudo, email, mot de passe et confirmation.
+  final TextEditingController _pseudoController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmController = TextEditingController();
@@ -24,6 +25,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
   @override
   void dispose() {
+    _pseudoController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
     _confirmController.dispose();
@@ -38,12 +40,19 @@ class _RegisterPageState extends State<RegisterPage> {
 
   /// Processus d'inscription.
   Future<void> _register() async {
+    final pseudo = _pseudoController.text.trim();
     final email = _emailController.text.trim();
     final pwd = _passwordController.text;
     final confirm = _confirmController.text;
 
-    if (email.isEmpty || pwd.isEmpty) {
-      _snack('Saisissez votre email et votre mot de passe.', Colors.orange);
+    if (pseudo.isEmpty || email.isEmpty || pwd.isEmpty) {
+      _snack('Saisissez votre pseudo, votre email et votre mot de passe.',
+          Colors.orange);
+      return;
+    }
+    if (pseudo.length < 3 || pseudo.length > 30) {
+      _snack('Le pseudo doit contenir entre 3 et 30 caractères.',
+          Colors.orange);
       return;
     }
     if (!email.contains('@')) {
@@ -63,15 +72,13 @@ class _RegisterPageState extends State<RegisterPage> {
 
     setState(() => _loading = true);
     try {
-      final connecte = await _authService.signUp(email: email, pwd: pwd);
+      final connecte =
+          await _authService.signUp(email: email, pwd: pwd, pseudo: pseudo);
       if (!mounted) return;
       if (connecte) {
         _snack('Inscription réussie.', Colors.green);
         // Même parcours qu'après une connexion : splash puis accueil.
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => SplashPage(email: email)),
-        );
+        Navigator.pushReplacementNamed(context, SplashPage.route);
       } else {
         // Confirmation par email activée dans Supabase.
         _snack(
@@ -125,6 +132,12 @@ class _RegisterPageState extends State<RegisterPage> {
                 Text('Créez votre compte',
                     style: TextStyle(color: Colors.grey[700])),
                 const SizedBox(height: 25),
+                TextFormField(
+                  controller: _pseudoController,
+                  maxLength: 30,
+                  decoration: _decoration('Pseudo').copyWith(counterText: ''),
+                ),
+                const SizedBox(height: 10),
                 TextFormField(
                   controller: _emailController,
                   keyboardType: TextInputType.emailAddress,

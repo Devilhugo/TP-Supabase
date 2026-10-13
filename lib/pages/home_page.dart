@@ -1,5 +1,8 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../services/authentification_service.dart';
@@ -17,9 +20,7 @@ class _Lien {
 class HomePage extends StatefulWidget {
   static const route = '/home';
 
-  const HomePage({super.key, this.email});
-  // email passé depuis la page de connexion
-  final String? email;
+  const HomePage({super.key});
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -27,7 +28,10 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final Logger logger = Logger();
-  String? _email;
+  final AuthentificationService _authService = AuthentificationService();
+  // Pseudo de l'utilisateur (ou son email s'il n'a pas de pseudo).
+  String? _nom;
+  StreamSubscription<AuthState>? _authSub;
 
   static const List<_Lien> _liens = [
     _Lien(Icons.public, 'Lequipe', 'https://www.lequipe.fr',
@@ -42,14 +46,22 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    _email = widget.email;
-    // Si on arrive par une route nommée (/home), l'email n'est pas passé :
-    // on le relit dans shared_preferences.
-    if (_email == null) {
-      AuthentificationService().getEmail().then((email) {
-        if (mounted) setState(() => _email = email);
-      });
-    }
+    _chargerNom();
+    // Mise à jour de l'AppBar quand le pseudo est modifié depuis le profil.
+    _authSub = Supabase.instance.client.auth.onAuthStateChange.listen((data) {
+      if (data.event == AuthChangeEvent.userUpdated) _chargerNom();
+    });
+  }
+
+  Future<void> _chargerNom() async {
+    final nom = await _authService.getNomAffiche();
+    if (mounted) setState(() => _nom = nom);
+  }
+
+  @override
+  void dispose() {
+    _authSub?.cancel();
+    super.dispose();
   }
 
   Future<void> _ouvrir(_Lien lien) async {
@@ -86,7 +98,7 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         backgroundColor: Colors.grey[200],
         title: Text(
-          'Accueil - Bienvenue ${_email ?? ''}',
+          'Accueil - Bienvenue ${_nom ?? ''}',
           overflow: TextOverflow.ellipsis,
           style: const TextStyle(fontSize: 16),
         ),

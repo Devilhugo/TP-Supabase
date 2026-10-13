@@ -86,7 +86,8 @@ lib/
 ├── widgets/app_drawer.dart   menu
 └── pages/
     ├── login_page.dart       étapes 17-20, 23
-    ├── register_page.dart    inscription (email + mot de passe)
+    ├── register_page.dart    inscription (pseudo + email + mot de passe)
+    ├── profil_page.dart      profil (modification du pseudo)
     ├── splash_page.dart      étape 36 (chargement du cache)
     ├── home_page.dart        étapes 2-3 (url_launcher)
     ├── carte_page.dart       étapes 3-5 (OpenStreetMap + marker)
@@ -115,6 +116,12 @@ Les tests vérifient la conversion des données Supabase (JSON) en objets
 
 Inscription (si pas encore de compte) -> Login
 -> splash (synchro Supabase -> Hive, 2 s minimum) -> Accueil
-(email dans l'AppBar). Toutes les pages reviennent sur `/home` via la
+(pseudo dans l'AppBar). Toutes les pages reviennent sur `/home` via la
 flèche ; Déconnexion vide la session, les préférences et le cache, puis
 renvoie sur `/login`.
+
+Le pseudo est stocké dans les métadonnées de l'utilisateur Supabase
+(`user_metadata.pseudo`, visible dans Authentication > Users) : aucune
+table supplémentaire n'est nécessaire. Il se modifie depuis le menu
+> Mon profil. Un compte sans pseudo (créé avant cette fonctionnalité)
+affiche son email jusqu'à ce qu'un pseudo soit renseigné.

@@ -50,11 +50,8 @@ class _LoginPageState extends State<LoginPage> {
       if (ok) {
         _snack('Connexion réussie.', Colors.green);
         // Redirection vers le splash screen (chargement du cache)
-        // puis l'accueil, en passant l'email entre les écrans.
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => SplashPage(email: email)),
-        );
+        // puis l'accueil.
+        Navigator.pushReplacementNamed(context, SplashPage.route);
       } else {
         _snack('La connexion a échouée pour une raison inconnue !', Colors.red);
       }
