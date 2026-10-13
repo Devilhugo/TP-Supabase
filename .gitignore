@@ -14,3 +14,14 @@ build/
 # OS
 .DS_Store
 Thumbs.db
+
+# Flutter (fichiers générés / locaux)
+.pub-cache/
+.pub/
+/coverage/
+*.log
+app.*.symbols
+app.*.map.json
+/android/app/debug
+/android/app/profile
+/android/app/release
