@@ -36,9 +36,18 @@ Dart récent), ce n'est pas grave : les fichiers `.g.dart` fournis suffisent.
    (coche "Auto Confirm User").
 3. SQL Editor : exécute `supabase_setup.sql` (tables, clé étrangère,
    données, policies RLS).
-4. Project Settings > API : copie l'URL et la clé `anon` dans
-   `lib/config.dart` (à la place de `VOTRE-PROJET` et `VOTRE_ANON_KEY`).
-   Sans ça, l'appli ne peut pas se connecter.
+4. Project Settings > API Keys : copie l'URL du projet et la
+   **publishable key** (`sb_publishable_...`, ou la clé `anon` dans l'onglet
+   Legacy) dans `lib/config.dart`.
+
+Le fichier `lib/config.dart` du dépôt est déjà configuré avec le projet
+Supabase du TP. Pour utiliser ton propre projet, remplace ces deux valeurs.
+
+> Ne mets jamais la **secret key** (`sb_secret_...` / `service_role`) dans
+> l'appli : elle contourne les règles RLS et donne tous les droits sur la
+> base. La publishable key, elle, peut être publique : ce sont les policies
+> RLS de `supabase_setup.sql` qui protègent les données (lecture réservée
+> aux utilisateurs connectés).
 
 ## 3. Android
 
